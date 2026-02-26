@@ -3,22 +3,35 @@ import multiprocessing as mp
 import math
 import time
 import argparse
+from pathlib import Path
 #import matplotlib.pyplot as plt
 
 class DataLoader:
   #hardcoded dataloader
+  def __init__(self, embeddings_file_path = './input.txt'):
+    #Tiny Shakespeare from Andrej Karpathy
+    self.embeddings_path = Path(embeddings_file_path)
+    
   def get_text(self):
-    return "Testiranje da li sve radi kako treba"
+    try:
+        return self.embeddings_path.read_text(encoding = 'utf-8')
+    except FileNotFoundError:
+        print(f"File {embeddings_file_path} not found! Falling back to hardcoded text in DataLoader get_text() function.")
+        return "Random text for embeddings this will not converge fast due to it being very short"
 
 class Word2Vec_SkipGram_Naive():
-  def __init__(self, dataloader, embedding_dim = 2, window_size = 2, lr = 0.03):
+  def __init__(self, dataloader, embedding_dim = 30, window_size = 2, epochs = 15, lr = 0.05):
     self.dataloader = dataloader
     self.embedding_dim = embedding_dim
     self.window_size = window_size
+    self.epochs = epochs
     self.lr = lr
     self.numerical_offset = 1e-10
   
     text = self.dataloader.get_text()
+    #remove the unnecessary characters
+    for char in ['.', ',', '!', '?', ':', ';']
+        text = text.replace(char,' ')
     words = text.lower().split()
 
     self.vocab = list(set(words))
@@ -61,7 +74,7 @@ class Word2Vec_SkipGram_Naive():
         continue
       
       word_weights = self.w1[self.lookup_word2idx[word]]
-      word_norm = linalg.norm(word_weights)
+      word_norm = np.linalg.norm(word_weights)
       # cosine similarity
       dot_product = np.dot(searched_word_weights, word_weights)
       norm_product = searched_word_norm * word_norm
@@ -150,15 +163,31 @@ if __name__ == "__main__":
   if args.mode == 'naive':
     print("Naive model chosen")
     model_naive = Word2Vec_SkipGram_Naive(dataloader)
-    loss = model_naive.train()
-    print(f"Naive Loss is {loss}")
-  # doesnt work yet
+    for epoch in range(model_naive.epochs):
+      loss = model_naive.train()
+      #if epoch % 10 == 0:
+      print(f"Epoch {epoch+1}, loss: {loss}")
+    print("Training complete!")
+    print("Testing...")
+    
+    test_words = ['risc-v', 'hardware', 'systems']
+    
+    for word in test_words:
+        print(f"Finding words near '{word}'")
+        similarities = model_naive.get_similar_words(word, top_k = 5)
+        
+        if isinstance(similarities, str):
+            print(similarities)
+        else:
+            for similar_word, score in similarities:
+                print(f"Similar word: {similar_word}, score: {score}")
+  # isnt implemented yet
   elif args.mode == 'optimized':
     print("Optimized model chosen")
     model_optimized = Word2Vec_SkipGram_Optimized(dataloader)
     loss = model_optimized.train()
     print(f"Optimized Loss is {loss}")
-  # doesnt work yet
+  # isnt implemented yet
   elif args.mode == 'compare':
     print("Optimized model chosen")
     model_naive = Word2Vec_SkipGram_Naive(dataloader)
