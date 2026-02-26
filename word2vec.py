@@ -30,7 +30,7 @@ class Word2Vec_SkipGram_Naive():
   
     text = self.dataloader.get_text()
     #remove the unnecessary characters
-    for char in ['.', ',', '!', '?', ':', ';']
+    for char in ['.', ',', '!', '?', ':', ';']:
         text = text.replace(char,' ')
     words = text.lower().split()
 
