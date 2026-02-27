@@ -6,7 +6,9 @@
 The goal of this project is to implement Skip-gram in several different ways from scratch.
 
 **Naive Approach** - implemented fully and tested. In this approach library numpy is used to implement forward pass, loss, gradients, and parameter updates.
+
 **Optimized Approach** - to be implemented. Plan is to implement negative sampling and vectorization, along with some cool tricks I picked up while implementing it Naively.
+
 **Comparison** - this mode will just compare the execution times of optimized and naive approach.
 
 
