@@ -96,6 +96,9 @@ class Word2Vec_SkipGram_Naive():
       lower_bound = max(i - self.window_size, 0)
       upper_bound = min(i + self.window_size + 1, len(self.corpus))
       curr_center_word_weights = self.w1[lookup_idx]
+      
+      grad_w1_accumulated = np.zeros(self.embedding_dim)
+      grad_w2_accumulated = np.zeros((self.vocab_size, self.embedding_dim))
 
       while lower_bound < upper_bound:
         if lower_bound == i:
@@ -117,27 +120,22 @@ class Word2Vec_SkipGram_Naive():
         error_array = y_hat
         
         #dL/dcurr_center_word_weight = error * w2 -> chain rule for products here
-        grad_curr_center_word_weights = np.zeros(self.embedding_dim)
-        grad_w2 = np.zeros((self.vocab_size, self.embedding_dim))
 
         for p in range(self.vocab_size):
           word_error = error_array[p]
           # += because we have to accumulate gradients
           for q in range(self.embedding_dim):
-            grad_curr_center_word_weights[q] += word_error * self.w2[p][q]
-          
-          # right now += is not needed here because each context word affects only one thing and that is center word, this will change if we introduce batching so we will keep += since it doesnt impact anything right now
-          for q in range(self.embedding_dim):
-            grad_w2[p][q] += word_error * curr_center_word_weights[q]
-        
-        for p in range(self.vocab_size):
-          for q in range(self.embedding_dim):
-            self.w2[p][q] -= self.lr * grad_w2[p][q]
-
-        for q in range(self.embedding_dim):
-          self.w1[lookup_idx][q] -= self.lr * grad_curr_center_word_weights[q]
+            grad_w1_accumulated[q] += word_error * self.w2[p][q]
+            grad_w2_accumulated[p][q] += word_error * curr_center_word_weights[q]
 
         lower_bound += 1
+        
+      for p in range(self.vocab_size):
+        for q in range(self.embedding_dim):
+          self.w2[p][q] -= self.lr * grad_w2_accumulated[p][q]
+
+      for q in range(self.embedding_dim):
+        self.w1[lookup_idx][q] -= self.lr * grad_w1_accumulated[q]
 
     return overall_loss
 
