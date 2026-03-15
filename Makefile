@@ -1,14 +1,16 @@
-setup:
+run: run-compare
+
+venv:
 	python3 -m venv venv
 	./venv/bin/pip install -r requirements.txt
 
-run-naive: setup
+run-naive: venv
 	./venv/bin/python word2vec.py --mode naive
 	
-run-optimized: setup
+run-optimized: venv
 	./venv/bin/python word2vec.py --mode optimized
 	
-run-compare: setup
+run-compare: venv
 	./venv/bin/python word2vec.py --mode compare
 	
 clean:
