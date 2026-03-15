@@ -21,7 +21,7 @@ The first time you run Makefile, setup is executed, which creates a virtual envi
 
  - ```make run-naive``` (runs Naive Approach)
  - ```make run-optimized``` (runs Optimized Approach)
- - ```make run``` and ```make run-compare``` (runs both approaches and compares them)
+ - ```make run``` and ```make run-compare``` (runs both approaches(Naive and Optimized) and compares them)
 
 Utility function ```make clean``` is added in order to delete the venv folder and delete pycache.
 
@@ -29,7 +29,7 @@ Utility function ```make clean``` is added in order to delete the venv folder an
 ***Prerequisite***: Python3 needs to be installed on the host environment (the environment from which you run the script)
 Run the script by double-clicking the *run.bat* file or use PowerShell or cmd using the following command:
 
- - ``` .\run.bat``` (runs Comparison mode)
+ - ``` .\run.bat``` (runs both approaches(Naive and Optimized) and compares them)
  - ``` .\run_optimized.bat``` (runs Optimized approach)
  
 Utility batch file ```.\clean.bat``` is added in order to delete the venv folder and delete pycache.
